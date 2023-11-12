@@ -1,6 +1,4 @@
 # piscine-reloaded
-Welcome back! Let's find out just how bad our memory is. Mine has more leaks than my code, so here's where to look up what has seeped out.
-
 ## ex00: `ls -l`
 - [`man ls`][1], mainly the section titled `The Long Format`.
 - To change the permissions we use [chmod][2].<br>
@@ -30,8 +28,7 @@ $ xxd z
 - I believe the real reference to a solution here is [The shell manual][31] (search for '%'). But frankly most of these seem to be rather obscure shell features.
 - Suffice it to say that `${VAR.*}` removes the extension from a file name, if `$VAR` was set to that name before. We can combine this with our new best friend `find` to reach our goal.
 
-## Review Questions
-<hr id="ex00">
+# Review Questions
 - What does `ls -l` do? Where can I find out?
 - What's the difference between a soft link (`ln -s`) - aka symbolic link - and a hard link (`ln`)?
 - What does the following output mean? What is the meaning of each column?
