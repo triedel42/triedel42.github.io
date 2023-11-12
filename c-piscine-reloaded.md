@@ -26,7 +26,11 @@ $ xxd z
 
 ## ex03: Parameter expansion
 - I believe the real reference to a solution here is [The shell manual][31] (search for '%'). But frankly most of these seem to be rather obscure shell features.
-- Suffice it to say that `${VAR.*}` removes the extension from a file name, if `$VAR` was set to that name before. We can combine this with our new best friend `find` to reach our goal.
+- Suffice it to say that `${VAR%.*}` removes the extension from a file name, if `$VAR` was set to that name before. We can combine this with our new best friend `find` to reach our goal.
+
+## ex04: ifconfig, grep
+- [`ifconfig`][40] gives us the entire list of network adapters, a pretty large output. Luckily we have [`grep`][41], which filters out lines that contain a specific string.
+- What we can get with those two commands still isn't quite enough. We have to trim that line down a big. I used [`cut`][42] for that.
 
 # Review Questions
 - What does `ls -l` do? Where can I find out?
@@ -56,6 +60,9 @@ lrwxrwxrwx 1 triedel triedel    5 Jun  1 22:20 test6 -> test0
 - How can we run a command on each file?
 - Let's write a find command that recursively tells us the file type (so runs `file`)
 <hr id="ex03">
+- In the shell, how do we remove the file extension from a filename?
+- Can we also remove patterns from the beginning of a variable? How? What is the syntax?
+<hr id="ex04">
 
 [1]: https://man.freebsd.org/cgi/man.cgi?ls
 [2]: https://man.freebsd.org/cgi/man.cgi?chmod
@@ -69,3 +76,6 @@ lrwxrwxrwx 1 triedel triedel    5 Jun  1 22:20 test6 -> test0
 [23]: https://man.freebsd.org/cgi/man.cgi?echo
 [30]: https://man.freebsd.org/cgi/man.cgi?find
 [31]: https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+[40]: https://man.freebsd.org/cgi/man.cgi?ifconfig
+[41]: https://man.freebsd.org/cgi/man.cgi?grep
+[42]: https://man.freebsd.org/cgi/man.cgi?cut

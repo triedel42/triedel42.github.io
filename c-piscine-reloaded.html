@@ -31,6 +31,7 @@ writing to file</a></li>
 <li><a href="#ex02-find">ex02: find</a></li>
 <li><a href="#ex03-parameter-expansion">ex03: Parameter
 expansion</a></li>
+<li><a href="#ex04-ifconfig-grep">ex04: ifconfig, grep</a></li>
 </ul></li>
 <li><a href="#review-questions">Review Questions</a></li>
 </ul>
@@ -101,10 +102,23 @@ interpret them as something else.</li>
 href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html">The
 shell manual</a> (search for ‘%’). But frankly most of these seem to be
 rather obscure shell features.</li>
-<li>Suffice it to say that <code>${VAR.*}</code> removes the extension
+<li>Suffice it to say that <code>${VAR%.*}</code> removes the extension
 from a file name, if <code>$VAR</code> was set to that name before. We
 can combine this with our new best friend <code>find</code> to reach our
 goal.</li>
+</ul>
+<h2 id="ex04-ifconfig-grep">ex04: ifconfig, grep</h2>
+<ul>
+<li><a
+href="https://man.freebsd.org/cgi/man.cgi?ifconfig"><code>ifconfig</code></a>
+gives us the entire list of network adapters, a pretty large output.
+Luckily we have <a
+href="https://man.freebsd.org/cgi/man.cgi?grep"><code>grep</code></a>,
+which filters out lines that contain a specific string.</li>
+<li>What we can get with those two commands still isn’t quite enough. We
+have to trim that line down a big. I used <a
+href="https://man.freebsd.org/cgi/man.cgi?cut"><code>cut</code></a> for
+that.</li>
 </ul>
 <h1 id="review-questions">Review Questions</h1>
 <ul>
@@ -142,6 +156,11 @@ file for example)</li>
 <li>Let’s write a find command that recursively tells us the file type
 (so runs <code>file</code>)
 <hr id="ex03"></li>
+<li>In the shell, how do we remove the file extension from a
+filename?</li>
+<li>Can we also remove patterns from the beginning of a variable? How?
+What is the syntax?
+<hr id="ex04"></li>
 </ul>
 </body>
 </html>
