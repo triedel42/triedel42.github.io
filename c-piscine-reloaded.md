@@ -1,4 +1,8 @@
 # piscine-reloaded
+> “Time is an illusion. Lunchtime doubly so.” - HG2G
+
+Welcome back! Let’s find out just how bad our memory is. Mine has more leaks than my code, so here’s where to look up what has seeped out.
+
 ## ex00: `ls -l`
 - [`man ls`][1], mainly the section titled `The Long Format`.
 - To change the permissions we use [chmod][2].<br>
@@ -9,8 +13,8 @@
   The basic usage is `tar -cf <archive> <contents>` to create, `tar -xf <archive>` to unpack and `tar -tf <archive>` to list the contents.
 
 ## ex01: echo, cat and writing to file
-- There are many ways to create the file. We can use
-  - [`echo`][23]
+- There are many ways to create the file.
+  - [`echo`][23] together with [output redirection][10]
   - [`cat`][22]
   - any editor (like `vim` or `nano`)
 - One way to view the exact contents of a file - byte for byte - is the command [`xxd`][20] (or [`hexdump`][21]).
@@ -70,6 +74,9 @@ lrwxrwxrwx 1 triedel triedel    5 Jun  1 22:20 test6 -> test0
 [3]: https://man.freebsd.org/cgi/man.cgi?touch
 [4]: https://www.redhat.com/sysadmin/linking-linux-explained
 [5]: https://man.freebsd.org/cgi/man.cgi?tar
+
+[10]: https://www.gnu.org/software/bash/manual/html_node/Redirections.html
+
 [20]: https://man.freebsd.org/cgi/man.cgi?xxd
 [21]: https://man.freebsd.org/cgi/man.cgi?hexdump
 [22]: https://man.freebsd.org/cgi/man.cgi?cat

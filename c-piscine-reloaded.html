@@ -8,10 +8,18 @@
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    span.underline{text-decoration: underline;}
-    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="styling.css" />
@@ -19,24 +27,35 @@
 <body>
 <header id="title-block-header">
 <h1 class="title"><a href="index.html">triedel's Guide to 42</a></h1>
-<p class="subtitle">mostly useless</p>
+<p class="subtitle">"mostly useless"</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#piscine-reloaded">piscine-reloaded</a>
+<li><a href="#piscine-reloaded"
+id="toc-piscine-reloaded">piscine-reloaded</a>
 <ul>
-<li><a href="#ex00-ls--l">ex00: <code>ls -l</code></a></li>
-<li><a href="#ex01-echo-cat-and-writing-to-file">ex01: echo, cat and
-writing to file</a></li>
-<li><a href="#ex02-find">ex02: find</a></li>
-<li><a href="#ex03-parameter-expansion">ex03: Parameter
-expansion</a></li>
-<li><a href="#ex04-ifconfig-grep">ex04: ifconfig, grep</a></li>
+<li><a href="#ex00-ls--l" id="toc-ex00-ls--l">ex00:
+<code>ls -l</code></a></li>
+<li><a href="#ex01-echo-cat-and-writing-to-file"
+id="toc-ex01-echo-cat-and-writing-to-file">ex01: echo, cat and writing
+to file</a></li>
+<li><a href="#ex02-find" id="toc-ex02-find">ex02: find</a></li>
+<li><a href="#ex03-parameter-expansion"
+id="toc-ex03-parameter-expansion">ex03: Parameter expansion</a></li>
+<li><a href="#ex04-ifconfig-grep" id="toc-ex04-ifconfig-grep">ex04:
+ifconfig, grep</a></li>
 </ul></li>
-<li><a href="#review-questions">Review Questions</a></li>
+<li><a href="#review-questions" id="toc-review-questions">Review
+Questions</a></li>
 </ul>
 </nav>
 <h1 id="piscine-reloaded">piscine-reloaded</h1>
+<blockquote>
+<p>“Time is an illusion. Lunchtime doubly so.” - HG2G</p>
+</blockquote>
+<p>Welcome back! Let’s find out just how bad our memory is. Mine has
+more leaks than my code, so here’s where to look up what has seeped
+out.</p>
 <h2 id="ex00-ls--l">ex00: <code>ls -l</code></h2>
 <ul>
 <li><a
@@ -62,10 +81,13 @@ archives similar to .zip files.<br> The basic usage is
 <h2 id="ex01-echo-cat-and-writing-to-file">ex01: echo, cat and writing
 to file</h2>
 <ul>
-<li>There are many ways to create the file. We can use
+<li>There are many ways to create the file.
 <ul>
 <li><a
-href="https://man.freebsd.org/cgi/man.cgi?echo"><code>echo</code></a></li>
+href="https://man.freebsd.org/cgi/man.cgi?echo"><code>echo</code></a>
+together with <a
+href="https://www.gnu.org/software/bash/manual/html_node/Redirections.html">output
+redirection</a></li>
 <li><a
 href="https://man.freebsd.org/cgi/man.cgi?cat"><code>cat</code></a></li>
 <li>any editor (like <code>vim</code> or <code>nano</code>)</li>
