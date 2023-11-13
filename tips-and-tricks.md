@@ -24,7 +24,7 @@ int	main(void)
 	return (RUN_ALL_TESTS());
 }
 ```
-To compile it you need the `googletest` package. After that we can use these make rules to compile and run the test with `make test`.
+To compile it you need the `googletest` and `pkg-config` packages. After that we can use these make rules to compile and run the test with `make test`.
 ```makefile
 $(TEST): gtest.cc $(NAME)
 	$(CXX) $(CFLAGS) $(shell pkg-config --cflags gtest) -o $@ $^ \

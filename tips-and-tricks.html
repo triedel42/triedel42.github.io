@@ -135,9 +135,9 @@ simple test case looks like this.</p>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    testing<span class="op">::</span>InitGoogleTest<span class="op">();</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>RUN_ALL_TESTS<span class="op">());</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>To compile it you need the <code>googletest</code> package. After
-that we can use these make rules to compile and run the test with
-<code>make test</code>.</p>
+<p>To compile it you need the <code>googletest</code> and
+<code>pkg-config</code> packages. After that we can use these make rules
+to compile and run the test with <code>make test</code>.</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode makefile"><code class="sourceCode makefile"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dv">$(TEST):</span><span class="dt"> gtest.cc </span><span class="ch">$(</span><span class="dt">NAME</span><span class="ch">)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">$(</span><span class="dt">CXX</span><span class="ch">)</span> <span class="ch">$(</span><span class="dt">CFLAGS</span><span class="ch">)</span> <span class="ch">$(</span><span class="kw">shell</span><span class="st"> pkg-config --cflags gtest</span><span class="ch">)</span> -o <span class="ch">$@</span> <span class="ch">$^</span> \</span>
