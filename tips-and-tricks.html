@@ -101,7 +101,7 @@ tricks</a>
 <li><a href="#installing-packages"
 id="toc-installing-packages">Installing packages</a></li>
 <li><a href="#write-your-own-tests" id="toc-write-your-own-tests">Write
-your own tests!</a></li>
+your own tests</a></li>
 <li><a href="#make--j" id="toc-make--j">make -j</a></li>
 </ul></li>
 </ul>
@@ -113,8 +113,8 @@ href="https://docs.brew.sh/Installation#untar-anywhere-unsupported">installed
 without root</a>, allowing you to install <a
 href="https://formulae.brew.sh/">packages</a> with
 <code>brew install &lt;package&gt;</code></p>
-<h2 id="write-your-own-tests">Write your own tests!</h2>
-<p>You <em>will</em> find mistakes. I use <a
+<h2 id="write-your-own-tests">Write your own tests</h2>
+<p>You <em>will</em> find mistakes, I promise. I use <a
 href="https://google.github.io/googletest/">GoogleTest</a> for this,
 becausee it gives me pretty output without any work. With GoogleTest a
 simple test case looks like this.</p>
@@ -146,6 +146,11 @@ class="sourceCode makefile"><code class="sourceCode makefile"><span id="cb2-1"><
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dv">test:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">TEST</span><span class="ch">)</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="er">    </span>clear</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    ./<span class="ch">$(</span><span class="dt">TEST</span><span class="ch">)</span></span></code></pre></div>
+<p>Note that this is C++, that’s why the compilation looks a bit
+different (the file suffix is <code>.cc</code>) and hence the
+<code>extern "C"</code> part. We can however still link to our original
+<code>.a</code> library, meaning we <em>are</em> testing the original
+binary.</p>
 <h2 id="make--j">make -j</h2>
 <p>You can compile much faster if you allow make to build in parallel.
 Put this in your <code>~/.zshrc</code></p>

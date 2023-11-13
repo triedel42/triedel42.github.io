@@ -3,8 +3,8 @@
 ## Installing packages
 Homebrew can be [installed without root][brew_noroot], allowing you to install [packages][brew_formulae] with `brew install <package>`
 
-## Write your own tests!
-You *will* find mistakes. I use [GoogleTest][gtest] for this, becausee it gives me pretty output without any work. With GoogleTest a simple test case looks like this.
+## Write your own tests
+You *will* find mistakes, I promise. I use [GoogleTest][gtest] for this, becausee it gives me pretty output without any work. With GoogleTest a simple test case looks like this.
 ```c
 #include <gtest/gtest.h>
 
@@ -34,6 +34,7 @@ test: $(TEST)
 	clear
 	./$(TEST)
 ```
+Note that this is C++, that's why the compilation looks a bit different (the file suffix is `.cc`) and hence the `extern "C"` part. We can however still link to our original `.a` library, meaning we *are* testing the original binary.
 
 ## make -j
 You can compile much faster if you allow make to build in parallel. Put this in your `~/.zshrc`
