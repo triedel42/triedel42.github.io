@@ -3,7 +3,7 @@
 
 Some of the mandatory functions are *not* part of the C standard library. They are however available on MacOS, which adopts them from BSD. I refer to [FreeBSD's man pages][freebsd] (same as `man`) for those instead of the [C reference][cref].
 
-## Mandatory part
+## Mandatory part - Part 1 (Libc functions)
 Most of the functions concern either chars or strings. The other three are taken from `stdlib.h`.
 
 ### Char functions
@@ -20,13 +20,13 @@ The [reference][ctype_h] has a handy table that gives a good overview. The man p
 - [stdlib.h][stdlib_h]: `atoi, calloc`
 - BSD libc: `strdup`
 
-### Additional functions
+## Mandatory part - Part 2 (Additional functions)
 Like the subject says there is no man page here. They are all functions for strings:
 
 `ft_substr, ft_strjoin, ft_strtrim, ft_split, ft_itoa, ft_strmapi, ft_striteri, ft_putchar_fd, ft_putstr_fd, ft_putendl_fd, ft_putnbr_fd`
 
 ## Bonus part
-In case you didn't know, we are building a [singly linked list][wiki_ll] here.
+Here we are building a [singly linked list][wiki_ll].
 
 # Resources
 - [ctype.h][ctype_h]
