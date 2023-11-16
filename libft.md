@@ -1,4 +1,43 @@
 # [Libft][intra-libft]
-> “Your library is your paradise.” ― Desiderius Erasmus 
+> "Look," said Arthur, "would it save you a lot of time if I just gave up and went mad now?"
+
+Some of the mandatory functions are *not* part of the C standard library. They are however available on MacOS, which adopts them from BSD. I refer to [FreeBSD's man pages][freebsd] (same as `man`) for those instead of the [C reference][cref].
+
+## Mandatory part
+Most of the functions concern either chars or strings. The other three are taken from `stdlib.h`.
+
+### Char functions
+The [reference][ctype_h] has a handy table that gives a good overview. The man pages contains the same info.
+
+- [ctype.h][ctype_h]: `isalpha, isdigit, isalnum, isprint, toupper, tolower`
+- BSD libc: `isascii`
+
+### String functions
+- [string.h][string_h]: `strlen, memset, memcpy, memmove, strchr, strrchr, memchr, memcmp`
+- BSD libc: `bzero, strlcpy, strlcat, strncmp, strnstr`
+
+### Others
+- [stdlib.h][stdlib_h]: `atoi, calloc`
+- BSD libc: `strdup`
+
+### Additional functions
+Like the subject says there is no man page here. They are all functions for strings:
+
+`ft_substr, ft_strjoin, ft_strtrim, ft_split, ft_itoa, ft_strmapi, ft_striteri, ft_putchar_fd, ft_putstr_fd, ft_putendl_fd, ft_putnbr_fd`
+
+## Bonus part
+In case you didn't know, we are building a [singly linked list][wiki_ll] here.
+
+# Resources
+- [ctype.h][ctype_h]
+- [string.h][string_h]
+- [stdlib.h][stdlib_h]
+- [FreeBSD man pages][freebsd]
 
 [intra-libft]:		https://projects.intra.42.fr/projects/42cursus-libft
+[cref]:             https://cplusplus.com/reference/clibrary/
+[freebsd]:          https://man.freebsd.org/cgi/man.cgi
+[string_h]:         https://cplusplus.com/reference/cstring/
+[ctype_h]:          https://cplusplus.com/reference/cctype/
+[stdlib_h]:         https://cplusplus.com/reference/cstdlib/
+[wiki_ll]:          https://en.wikipedia.org/wiki/Linked_list
