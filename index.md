@@ -1,6 +1,6 @@
 I'm [triedel][intra-triedel], a student at [42Wolfsburg](https://42wolfsburg.de/)
 
-My goal here is to assemble resources about what we learn, together with practice questions for later review and exam preparation.
+This is my notebook for 42. My goal here is to assemble resources about what we learn, together with practice questions for later review and exam preparation.
 
 <hr>
 

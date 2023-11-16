@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>triedel's Guide to 42</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="styling.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title"><a href="index.html">triedel's Guide to 42</a></h1>
+<p class="subtitle">"mostly useless"</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#piscine-reloaded"
+id="toc-piscine-reloaded">piscine-reloaded</a>
+<ul>
+<li><a href="#ex00-ls--l" id="toc-ex00-ls--l">ex00:
+<code>ls -l</code></a></li>
+<li><a href="#ex01-echo-cat-and-writing-to-file"
+id="toc-ex01-echo-cat-and-writing-to-file">ex01: echo, cat and writing
+to file</a></li>
+<li><a href="#ex02-find" id="toc-ex02-find">ex02: find</a></li>
+<li><a href="#ex03-parameter-expansion"
+id="toc-ex03-parameter-expansion">ex03: Parameter expansion</a></li>
+<li><a href="#ex04-ifconfig-grep" id="toc-ex04-ifconfig-grep">ex04:
+ifconfig, grep</a></li>
+</ul></li>
+<li><a href="#review-questions" id="toc-review-questions">Review
+Questions</a></li>
+</ul>
+</nav>
+<h1 id="piscine-reloaded">piscine-reloaded</h1>
+<blockquote>
+<p>“Time is an illusion. Lunchtime doubly so.” - HG2G</p>
+</blockquote>
+<p>Welcome back! Let’s find out just how bad our memory is. Mine has
+more leaks than my code, so here’s where to look up what has seeped
+out.</p>
+<h2 id="ex00-ls--l">ex00: <code>ls -l</code></h2>
+<ul>
+<li><a
+href="https://man.freebsd.org/cgi/man.cgi?ls"><code>man ls</code></a>,
+mainly the section titled <code>The Long Format</code>.</li>
+<li>To change the permissions we use <a
+href="https://man.freebsd.org/cgi/man.cgi?chmod">chmod</a>.<br> There
+are 2 types of syntax: symbolic mode (e.g. <code>chmod u+x test1</code>)
+and absolute mode (e.g. <code>chmod 715 test0</code>)</li>
+<li>To modify the access time we need <a
+href="https://man.freebsd.org/cgi/man.cgi?touch">touch</a> with the
+flags <code>-t</code> and sometimes <code>-h</code></li>
+<li>Also important here is the <a
+href="https://www.redhat.com/sysadmin/linking-linux-explained">difference
+between a hard link and a soft link</a>.</li>
+<li>We can also learn about <a
+href="https://man.freebsd.org/cgi/man.cgi?tar">tar</a>, which creates
+archives similar to .zip files.<br> The basic usage is
+<code>tar -cf &lt;archive&gt; &lt;contents&gt;</code> to create,
+<code>tar -xf &lt;archive&gt;</code> to unpack and
+<code>tar -tf &lt;archive&gt;</code> to list the contents.</li>
+</ul>
+<h2 id="ex01-echo-cat-and-writing-to-file">ex01: echo, cat and writing
+to file</h2>
+<ul>
+<li>There are many ways to create the file.
+<ul>
+<li><a
+href="https://man.freebsd.org/cgi/man.cgi?echo"><code>echo</code></a>
+together with <a
+href="https://www.gnu.org/software/bash/manual/html_node/Redirections.html">output
+redirection</a></li>
+<li><a
+href="https://man.freebsd.org/cgi/man.cgi?cat"><code>cat</code></a></li>
+<li>any editor (like <code>vim</code> or <code>nano</code>)</li>
+</ul></li>
+<li>One way to view the exact contents of a file - byte for byte - is
+the command <a
+href="https://man.freebsd.org/cgi/man.cgi?xxd"><code>xxd</code></a> (or
+<a
+href="https://man.freebsd.org/cgi/man.cgi?hexdump"><code>hexdump</code></a>).</li>
+</ul>
+<pre><code>$ xxd z
+00000000: 5a0a                                     Z.</code></pre>
+<ul>
+<li>Do you remember that they always did this <code>| cat -e</code> when
+testing our output? We can also use this here to make sure there is a
+<code>$</code> marking the line break at the end.</li>
+</ul>
+<h2 id="ex02-find">ex02: find</h2>
+<ul>
+<li><a
+href="https://man.freebsd.org/cgi/man.cgi?find"><code>man find</code></a></li>
+<li>The simplest way to use find for listing files is something like
+<code>find . -type f</code>. We can use <code>-name</code> to filter by
+file name (<code>find . -name '*.txt'</code>). But to accomplish what we
+need here, we need to use <code>-o</code> (“or”) for combining those
+name filters. However we have to surround this expression with brackets.
+And we have to “escape” those brackets using backslashes <code>\</code>,
+such that our shell passes them on to <code>find</code> and doesn’t
+interpret them as something else.</li>
+</ul>
+<h2 id="ex03-parameter-expansion">ex03: Parameter expansion</h2>
+<ul>
+<li>I believe the real reference to a solution here is <a
+href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html">The
+shell manual</a> (search for ‘%’). But frankly most of these seem to be
+rather obscure shell features.</li>
+<li>Suffice it to say that <code>${VAR%.*}</code> removes the extension
+from a file name, if <code>$VAR</code> was set to that name before. We
+can combine this with our new best friend <code>find</code> to reach our
+goal.</li>
+</ul>
+<h2 id="ex04-ifconfig-grep">ex04: ifconfig, grep</h2>
+<ul>
+<li><a
+href="https://man.freebsd.org/cgi/man.cgi?ifconfig"><code>ifconfig</code></a>
+gives us the entire list of network adapters, a pretty large output.
+Luckily we have <a
+href="https://man.freebsd.org/cgi/man.cgi?grep"><code>grep</code></a>,
+which filters out lines that contain a specific string.</li>
+<li>What we can get with those two commands still isn’t quite enough. We
+have to trim that line down a big. I used <a
+href="https://man.freebsd.org/cgi/man.cgi?cut"><code>cut</code></a> for
+that.</li>
+</ul>
+<h1 id="review-questions">Review Questions</h1>
+<ul>
+<li>What does <code>ls -l</code> do? Where can I find out?</li>
+<li>What’s the difference between a soft link (<code>ln -s</code>) - aka
+symbolic link - and a hard link (<code>ln</code>)?</li>
+<li>What does the following output mean? What is the meaning of each
+column?</li>
+</ul>
+<pre><code>$ ls -l
+total 32
+drwx--xr-x 2 triedel triedel 4096 Jun  1 20:47 test0
+-rwx--xr-- 1 triedel triedel    4 Jun  1 21:46 test1
+dr-x---r-- 2 triedel triedel 4096 Jun  1 22:45 test2
+-r-----r-- 2 triedel triedel    1 Jun  1 23:44 test3
+-rw-r----x 1 triedel triedel    2 Jun  1 23:43 test4
+-r-----r-- 2 triedel triedel    1 Jun  1 23:44 test5
+lrwxrwxrwx 1 triedel triedel    5 Jun  1 22:20 test6 -&gt; test0</code></pre>
+<ul>
+<li>When you extract your archive the permissions change. How do you
+prevent that? Why do they change? (hint: umask)</li>
+<li>Why does <code>touch -t 06012220 test6</code> not do what one might
+expect? Which flag prevents it?</li>
+<li>What is a “dangling soft link”. Is there such a thing as a “dangling
+hard link”? Why?
+<hr id="ex01"></li>
+<li>How can we dump the contents of a file?</li>
+<li>How do we tell <code>echo</code> to not end with a line break?
+<hr id="ex02"></li>
+<li>How do we use find to list all files here and in subfolders?</li>
+<li>How do we combine multiple expressions?</li>
+<li>How do we negate them (find everything that’s not a <code>.c</code>
+file for example)</li>
+<li>How can we run a command on each file?</li>
+<li>Let’s write a find command that recursively tells us the file type
+(so runs <code>file</code>)
+<hr id="ex03"></li>
+<li>In the shell, how do we remove the file extension from a
+filename?</li>
+<li>Can we also remove patterns from the beginning of a variable? How?
+What is the syntax?
+<hr id="ex04"></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>triedel's Guide to 42</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="styling.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title"><a href="index.html">triedel's Guide to 42</a></h1>
+<p class="subtitle">"mostly useless"</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#libftintra-libft" id="toc-libftintra-libft">Libft</a>
+<ul>
+<li><a href="#mandatory-part" id="toc-mandatory-part">Mandatory part</a>
+<ul>
+<li><a href="#char-functions" id="toc-char-functions">Char
+functions</a></li>
+<li><a href="#string-functions" id="toc-string-functions">String
+functions</a></li>
+<li><a href="#others" id="toc-others">Others</a></li>
+<li><a href="#additional-functions"
+id="toc-additional-functions">Additional functions</a></li>
+</ul></li>
+<li><a href="#bonus-part" id="toc-bonus-part">Bonus part</a></li>
+</ul></li>
+<li><a href="#resources" id="toc-resources">Resources</a></li>
+</ul>
+</nav>
+<h1 id="libftintra-libft"><a
+href="https://projects.intra.42.fr/projects/42cursus-libft">Libft</a></h1>
+<blockquote>
+<p>“Look,” said Arthur, “would it save you a lot of time if I just gave
+up and went mad now?”</p>
+</blockquote>
+<p>Some of the mandatory functions are <em>not</em> part of the C
+standard library. They are however available on MacOS, which adopts them
+from BSD. I refer to <a
+href="https://man.freebsd.org/cgi/man.cgi">FreeBSD’s man pages</a> (same
+as <code>man</code>) for those instead of the <a
+href="https://cplusplus.com/reference/clibrary/">C reference</a>.</p>
+<h2 id="mandatory-part">Mandatory part</h2>
+<p>Most of the functions concern either chars or strings. The other
+three are taken from <code>stdlib.h</code>.</p>
+<h3 id="char-functions">Char functions</h3>
+<p>The <a href="https://cplusplus.com/reference/cctype/">reference</a>
+has a handy table that gives a good overview. The man pages contains the
+same info.</p>
+<ul>
+<li><a href="https://cplusplus.com/reference/cctype/">ctype.h</a>:
+<code>isalpha, isdigit, isalnum, isprint, toupper, tolower</code></li>
+<li>BSD libc: <code>isascii</code></li>
+</ul>
+<h3 id="string-functions">String functions</h3>
+<ul>
+<li><a href="https://cplusplus.com/reference/cstring/">string.h</a>:
+<code>strlen, memset, memcpy, memmove, strchr, strrchr, memchr, memcmp</code></li>
+<li>BSD libc:
+<code>bzero, strlcpy, strlcat, strncmp, strnstr</code></li>
+</ul>
+<h3 id="others">Others</h3>
+<ul>
+<li><a href="https://cplusplus.com/reference/cstdlib/">stdlib.h</a>:
+<code>atoi, calloc</code></li>
+<li>BSD libc: <code>strdup</code></li>
+</ul>
+<h3 id="additional-functions">Additional functions</h3>
+<p>Like the subject says there is no man page here. They are all
+functions for strings:</p>
+<p><code>ft_substr, ft_strjoin, ft_strtrim, ft_split, ft_itoa, ft_strmapi, ft_striteri, ft_putchar_fd, ft_putstr_fd, ft_putendl_fd, ft_putnbr_fd</code></p>
+<h2 id="bonus-part">Bonus part</h2>
+<p>In case you didn’t know, we are building a <a
+href="https://en.wikipedia.org/wiki/Linked_list">singly linked list</a>
+here.</p>
+<h1 id="resources">Resources</h1>
+<ul>
+<li><a href="https://cplusplus.com/reference/cctype/">ctype.h</a></li>
+<li><a href="https://cplusplus.com/reference/cstring/">string.h</a></li>
+<li><a href="https://cplusplus.com/reference/cstdlib/">stdlib.h</a></li>
+<li><a href="https://man.freebsd.org/cgi/man.cgi">FreeBSD man
+pages</a></li>
+</ul>
+</body>
+</html>

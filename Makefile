@@ -14,7 +14,7 @@ index.html: index.md
 %.html: %.md
 	$(PD) --toc -o $@ $<
 
-open:
+open: all
 ifeq ($(OS),Darwin)
 	open index.html
 endif
