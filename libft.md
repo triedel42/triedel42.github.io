@@ -28,6 +28,9 @@ Like the subject says there is no man page here. They are all functions for stri
 ## Bonus part
 In case you didn't know, we are building a [singly linked list][wiki_ll] here.
 
+## Remarks
+- I struggled with strlcat, because the return value that it gives seems to contradict the man page in some cases. For those cases I actually condone having a peek at [bsd_libc][the original code] to understand how it's supposed to behave. I noticed that we always count to the back of `src` and up to len in `dst`. That helped me reproduce the same behavior.
+
 # Resources
 - [ctype.h][ctype_h]
 - [string.h][string_h]
@@ -41,3 +44,4 @@ In case you didn't know, we are building a [singly linked list][wiki_ll] here.
 [ctype_h]:          https://cplusplus.com/reference/cctype/
 [stdlib_h]:         https://cplusplus.com/reference/cstdlib/
 [wiki_ll]:          https://en.wikipedia.org/wiki/Linked_list
+[bsd_libc]:			https://cgit.freebsd.org/src/tree/lib/libc/string
