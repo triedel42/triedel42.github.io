@@ -4,7 +4,7 @@
 Some of the mandatory functions are *not* part of the C standard library. They are however available on MacOS, which adopts them from BSD. I refer to [FreeBSD's man pages][freebsd] (same as `man`) for those instead of the [C reference][cref].
 
 ## Mandatory part
-Most of the functions concern either chars or strings. The other three are taken from `stdlib.h`.
+Most of the functions concern either chars or strings. The other three are taken from [`stdlib.h`][stdlib_h].
 
 ### Char functions
 The [reference][ctype_h] has a handy table that gives a good overview. The man pages contains the same info.
