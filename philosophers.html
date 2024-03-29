@@ -5,6 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>triedel's Guide to 42</title>
+  <link rel="icon" href="favicon.ico" />
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -97,7 +98,9 @@
 <ul>
 <li><a href="#philosophers" id="toc-philosophers">Philosophers</a>
 <ul>
-<li><a href="#functions" id="toc-functions">Functions</a>
+<li><a href="#functions" id="toc-functions">Functions</a></li>
+<li><a href="#race-conditions-abridged"
+id="toc-race-conditions-abridged">Race conditions (abridged)</a>
 <ul>
 <li><a href="#basic-thread-handling"
 id="toc-basic-thread-handling">Basic thread handling</a></li>
@@ -108,7 +111,11 @@ id="toc-basic-thread-handling">Basic thread handling</a></li>
 outline</a>
 <ul>
 <li><a href="#philosophers-behavior"
-id="toc-philosophers-behavior">Philosopher’s behavior</a></li>
+id="toc-philosophers-behavior">Philosophers’ behavior</a></li>
+<li><a href="#finding-the-dead---and-killing-them"
+id="toc-finding-the-dead---and-killing-them">Finding the dead - and
+killing them</a></li>
+<li><a href="#bonus-part" id="toc-bonus-part">Bonus part</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -125,11 +132,6 @@ href="https://www.man7.org/linux/man-pages/man2/fork.2.html"><code>fork</code></
 in that it runs concurrently with other threads. It is unlike a process
 in that it shares its memory and even the program binary with other
 threads.</p>
-<p>You might wonder what the big deal is with this project. After all,
-why not just have a boolean for each fork where <code>true</code> means
-“available” and <code>false</code> means taken? The problem with that
-are <a href="https://en.wikipedia.org/wiki/Race_condition">race
-conditions</a>.</p>
 <h2 id="functions">Functions</h2>
 <ul>
 <li>old friends: <a
@@ -161,29 +163,53 @@ href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_l
 <a
 href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_lock.html"><code>pthread_mutex_unlock</code></a>,</li>
 </ul>
+<h2 id="race-conditions-abridged">Race conditions (abridged)</h2>
+<p>You might wonder what the big deal is with this project. After all,
+why not just have a boolean for each fork where <code>true</code> means
+“available” and <code>false</code> means taken? The problem with that
+are <a href="https://en.wikipedia.org/wiki/Race_condition">race
+conditions</a>.</p>
+<p>Here is what might happen in our case:</p>
+<pre><code>philosopher 1: &quot;hey look, fork 2 is free!&quot;   (= read state of fork 2)
+philosopher 2: &quot;hey look, fork 2 is free!&quot;   (= read state of fork 2)
+philosopher 1  sets fork 2 as taken.         (= write state of fork 2)
+philosopher 1  sets fork 2 as taken          (= write state of fork 2)</code></pre>
+<p>After this, <em>both</em> philosophers are in possession of the
+<em>same fork</em>. We have created a race condition. This can happen
+with memory where reads and writes from different threads are
+interleaved in such a way that the order matters.</p>
+<p>The same scenario could have played out like this and all would be
+“fine”.</p>
+<pre><code>philosopher 1: &quot;hey look, fork 2 is free!&quot;   (= read state of fork 2)
+philosopher 1  sets fork 2 as taken.         (= write state of fork 2)
+philosopher 2: &quot;Oh no, fork 2 is taken&quot;      (= read state of fork 2)</code></pre>
+<p>We do not want our program to depend on coincidence, therefore we
+will make use of <a
+href="https://en.wikipedia.org/wiki/Mutual_exclusion">mutual
+exclusions</a>, mutex for short.</p>
 <h3 id="basic-thread-handling">Basic thread handling</h3>
 <p>Creating a simple thread is straightforward. We only need a function
 that takes and returns a void pointer:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">/* This is the code that our thread will run */</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span>    <span class="op">*</span>threadfun<span class="op">(</span><span class="dt">void</span> <span class="op">*</span>args<span class="op">)</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;I&#39;m a thread</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>NULL<span class="op">);</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    pthread_t   thread<span class="op">;</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Here we thread starts by calling threadfun */</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    pthread_create<span class="op">(&amp;</span>thread<span class="op">,</span> NULL<span class="op">,</span> threadfun<span class="op">,</span> NULL<span class="op">);</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Here we wait for our thread to finish */</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    pthread_join<span class="op">(</span>thread<span class="op">,</span> NULL<span class="op">);</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">/* This is the code that our thread will run */</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span>    <span class="op">*</span>threadfun<span class="op">(</span><span class="dt">void</span> <span class="op">*</span>args<span class="op">)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;I&#39;m a thread</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>NULL<span class="op">);</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    pthread_t   thread<span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Here we thread starts by calling threadfun */</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    pthread_create<span class="op">(&amp;</span>thread<span class="op">,</span> NULL<span class="op">,</span> threadfun<span class="op">,</span> NULL<span class="op">);</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Here we wait for our thread to finish */</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    pthread_join<span class="op">(</span>thread<span class="op">,</span> NULL<span class="op">);</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h3 id="mutexes">Mutexes</h3>
-<p>Mutexes are a way to ensure that a recource like a fork (or memory)
+<p>Mutexes are a way to ensure that a resource like a fork (or memory)
 is only in use by one thread at a time. For this we call <a
 href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_lock.html"><code>pthread_mutex_lock</code></a>.
 If the resource is free, we take it and lock it so that nobody else can
@@ -206,7 +232,7 @@ too.</p>
 look like.</p>
 <p>Let’s translate our task: Philosophers are threads, forks are
 mutexes. Eating is waiting while holding a mutex, thinking and sleeping
-is doing so without a mutex.</p>
+are doing so without a mutex.</p>
 <ol type="1">
 <li>Process arguments</li>
 <li>Set up Mutexes</li>
@@ -215,7 +241,7 @@ is doing so without a mutex.</p>
 <li>Wait for philosopher threads to finish</li>
 <li>Destroy mutexes and exit</li>
 </ol>
-<h3 id="philosophers-behavior">Philosopher’s behavior</h3>
+<h3 id="philosophers-behavior">Philosophers’ behavior</h3>
 <p>Let us try to describe the individual philosopher’s behavior. The
 subject tells us:</p>
 <blockquote>
@@ -230,14 +256,68 @@ either one.</p>
 <li>sleep</li>
 <li>think</li>
 </ul>
-<p>While eating and sleeping don’t offer much choice (they are
-<code>usleep</code> with and without holding a mutex).</p>
+<p>While eating and sleeping don’t offer much choice (They are
+<code>usleep(fixed_duration)</code> with and without holding a mutex.),
+waiting is <em>perhaps</em> not as simple. Naively, when thinking, we
+could simply call <code>pthread_mutex_lock</code>. That blocks our
+thread until a fork is available. In the meantime we might have starved
+however, without having announced it on the output and that is a
+sin.</p>
+<p>How do we solve this then? There is no way for us to <em>check</em>
+if the mutex is free (<code>pthread_mutex_trylock</code> is forbidden).
+To solve that we could have a shared <code>bool</code> array and only
+call <code>pthread_mutex_lock</code> when it appears free, but we might
+not succeed, and wait again. Perhaps, almost realistically, philosophers
+cannot pronounce <em>themselves</em> dead. That also explain this line
+from the subject.</p>
+<blockquote>
+<p>A message announcing a philosopher died should be displayed no more
+than 10 ms after the actual death of the philosopher.</p>
+</blockquote>
+<h3 id="finding-the-dead---and-killing-them">Finding the dead - and
+killing them</h3>
+<p>Allright then, having found out that we have to identify starved
+philosophers from the original thread, how do we do that? It should be
+easy.</p>
+<p>In the memory that is shared with the threads we keep a record of
+each philosopher’s last meal time. We check continuously and as soon as
+we notice that it’s more than <code>time_to_die</code> milliseconds in
+the past we write a message and exit the program.</p>
+<p>This does not create a race condition, because each thread only
+writes to their respective philosopher’s meal time and we only read it
+from the original thread.</p>
+<p>Here is what the main thread might look like.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* This runs in the main thread */</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>check_if_starved<span class="op">(</span>philosophers<span class="op">))</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    usleep<span class="op">(</span><span class="dv">1000</span><span class="op">);</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>announce_dead<span class="op">(</span>philosophers<span class="op">);</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">/* then clean up and exit */</span></span></code></pre></div>
+<p>Once we have found a starved philosopher, we have to tell him that he
+starved - no really - by killing (or detaching the thread). That is
+something to take care of in the clean-up function.</p>
+<hr />
+<p>Another thing to consider or optimize is - maybe you’ve heard of it -
+<a href="https://en.wikipedia.org/wiki/Empathy">empathy</a>. I don’t
+know about you, but I wouldn’t take another poor starving thread’s
+mutexes away while my belly is full!</p>
+<p>Joking aside, there might be something to be gained from
+<code>usleep</code>ing a bit before taking a fork, in order to give
+those philosophers closer to starving a chance of taking them first.
+While we cannot communicate among the threads, this is a simple way of
+doing something similar: coordinating.</p>
+<p>When and how long can we delay taking the fork? Well we know for long
+the fork will be gone. It will be gone for <code>time_to_eat</code>
+milliseconds. Therefore as long as we can survive longer than that we
+can afford some altruism (aka <code>usleep</code>).</p>
+<h3 id="bonus-part">Bonus part</h3>
 <p>Why would we need <a
 href="https://www.man7.org/linux/man-pages/man2/waitpid.2.html"><code>waitpid</code></a>
 if we can’t <a
 href="https://www.man7.org/linux/man-pages/man2/fork.2.html"><code>fork</code></a>?
 Good question.</p>
-<p>Have you paid attention to the philosophical implications made? What
-may look like thinking on the outside is really only waiting to eat.</p>
+<p>Have you paid attention to the deeply philosophical implications
+made? What may look like thinking on the outside is really only waiting
+to eat.</p>
+<div style="height: 1500px; display: block"></div>
 </body>
 </html>
