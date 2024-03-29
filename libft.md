@@ -3,8 +3,8 @@
 
 Some of the mandatory functions are *not* part of the C standard library. They are however available on MacOS, which adopts them from BSD. I refer to [FreeBSD's man pages][freebsd] (same as `man`) for those instead of the [C reference][cref].
 
-## Mandatory part - Part 1 (Libc functions)
-Most of the functions concern either chars or strings. The other three are taken from `stdlib.h`.
+## Mandatory part
+Most of the functions concern either chars or strings. The other three are taken from [`stdlib.h`][stdlib_h].
 
 ### Char functions
 The [reference][ctype_h] has a handy table that gives a good overview. The man pages contains the same info.
@@ -28,6 +28,9 @@ Like the subject says there is no man page here. They are all functions for stri
 ## Bonus part
 Here we are building a [singly linked list][wiki_ll].
 
+## Remarks
+- I struggled with strlcat, because the return value that it gives seems to contradict the man page in some cases. For those cases I actually condone having a peek at [bsd_libc][the original code] to understand how it's supposed to behave. I noticed that we always count to the back of `src` and up to len in `dst`. That helped me reproduce the same behavior.
+
 # Resources
 - [ctype.h][ctype_h]
 - [string.h][string_h]
@@ -41,3 +44,4 @@ Here we are building a [singly linked list][wiki_ll].
 [ctype_h]:          https://cplusplus.com/reference/cctype/
 [stdlib_h]:         https://cplusplus.com/reference/cstdlib/
 [wiki_ll]:          https://en.wikipedia.org/wiki/Linked_list
+[bsd_libc]:			https://cgit.freebsd.org/src/tree/lib/libc/string
