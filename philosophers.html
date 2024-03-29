@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>triedel's Guide to 42</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="styling.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title"><a href="index.html">triedel's Guide to 42</a></h1>
+<p class="subtitle">"mostly useless"</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#philosophers" id="toc-philosophers">Philosophers</a>
+<ul>
+<li><a href="#functions" id="toc-functions">Functions</a>
+<ul>
+<li><a href="#basic-thread-handling"
+id="toc-basic-thread-handling">Basic thread handling</a></li>
+<li><a href="#mutexes" id="toc-mutexes">Mutexes</a></li>
+<li><a href="#text-output" id="toc-text-output">Text output</a></li>
+</ul></li>
+<li><a href="#program-outline" id="toc-program-outline">Program
+outline</a>
+<ul>
+<li><a href="#philosophers-behavior"
+id="toc-philosophers-behavior">Philosopher’s behavior</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="philosophers">Philosophers</h1>
+<blockquote>
+<p>“To be is to do” - Socrates<br> “To do is to be” - Sartre<br> “Do be
+do be do” - Sinatra<br></p>
+</blockquote>
+<p>Since this project is about learning how threads work, let’s start <a
+href="https://en.wikipedia.org/wiki/Thread_(computing)">there</a>.</p>
+<p>A thread is like a process (see <a
+href="https://www.man7.org/linux/man-pages/man2/fork.2.html"><code>fork</code></a>)
+in that it runs concurrently with other threads. It is unlike a process
+in that it shares its memory and even the program binary with other
+threads.</p>
+<p>You might wonder what the big deal is with this project. After all,
+why not just have a boolean for each fork where <code>true</code> means
+“available” and <code>false</code> means taken? The problem with that
+are <a href="https://en.wikipedia.org/wiki/Race_condition">race
+conditions</a>.</p>
+<h2 id="functions">Functions</h2>
+<ul>
+<li>old friends: <a
+href="https://www.man7.org/linux/man-pages/man3/memset.3.html"><code>memset</code></a>,
+<a
+href="https://www.man7.org/linux/man-pages/man3/printf.3.html"><code>printf</code></a>,
+<a
+href="https://www.man7.org/linux/man-pages/man3/malloc.3.html"><code>malloc</code></a>,
+<a
+href="https://www.man7.org/linux/man-pages/man3/free.3.html"><code>free</code></a>,
+<a
+href="https://www.man7.org/linux/man-pages/man2/write.2.html"><code>write</code></a></li>
+<li>timing: <a
+href="https://www.man7.org/linux/man-pages/man3/usleep.3.html"><code>usleep</code></a>,
+<a
+href="https://www.man7.org/linux/man-pages/man2/gettimeofday.2.html"><code>gettimeofday</code></a></li>
+<li>new enemies: <a
+href="https://www.man7.org/linux/man-pages/man3/pthread_create.3.html"><code>pthread_create</code></a>,
+<a
+href="https://www.man7.org/linux/man-pages/man3/pthread_detach.3.html"><code>pthread_detach</code></a>,
+<a
+href="https://www.man7.org/linux/man-pages/man3/pthread_join.3.html"><code>pthread_join</code></a></li>
+<li>mutex: <a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_init.html"><code>pthread_mutex_init</code></a>,
+<a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_init.html"><code>pthread_mutex_destroy</code></a>,
+<a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_lock.html"><code>pthread_mutex_lock</code></a>,
+<a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_lock.html"><code>pthread_mutex_unlock</code></a>,</li>
+</ul>
+<h3 id="basic-thread-handling">Basic thread handling</h3>
+<p>Creating a simple thread is straightforward. We only need a function
+that takes and returns a void pointer:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">/* This is the code that our thread will run */</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span>    <span class="op">*</span>threadfun<span class="op">(</span><span class="dt">void</span> <span class="op">*</span>args<span class="op">)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;I&#39;m a thread</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>NULL<span class="op">);</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    pthread_t   thread<span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Here we thread starts by calling threadfun */</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    pthread_create<span class="op">(&amp;</span>thread<span class="op">,</span> NULL<span class="op">,</span> threadfun<span class="op">,</span> NULL<span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Here we wait for our thread to finish */</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    pthread_join<span class="op">(</span>thread<span class="op">,</span> NULL<span class="op">);</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="mutexes">Mutexes</h3>
+<p>Mutexes are a way to ensure that a recource like a fork (or memory)
+is only in use by one thread at a time. For this we call <a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_mutex_lock.html"><code>pthread_mutex_lock</code></a>.
+If the resource is free, we take it and lock it so that nobody else can
+interfere. If it isn’t, <code>pthread_mutex_lock</code> waits until it
+is. In either case after <code>pthread_mutex_lock</code> returns
+(successfully) we are in possession of the resource. Once we’re done we
+make sure to <code>pthread_mutex_unlock</code> the resource.</p>
+<h3 id="text-output">Text output</h3>
+<p>One last thing. Have you noticed this line in the subject?</p>
+<blockquote>
+<p>A displayed state message should not be mixed up with another
+message</p>
+</blockquote>
+<p>It’s not explicit, but we should regard outputting text as a resource
+as well. If we want to ensure that text isn’t mangled by threads
+interrupting each other, we should use a mutex for locking the output
+too.</p>
+<h2 id="program-outline">Program outline</h2>
+<p>With all this at our disposal it becomes clear what our program must
+look like.</p>
+<p>Let’s translate our task: Philosophers are threads, forks are
+mutexes. Eating is waiting while holding a mutex, thinking and sleeping
+is doing so without a mutex.</p>
+<ol type="1">
+<li>Process arguments</li>
+<li>Set up Mutexes</li>
+<li>Start philosopher threads</li>
+<li>Have the threads acquire and release mutexes and wait as needed</li>
+<li>Wait for philosopher threads to finish</li>
+<li>Destroy mutexes and exit</li>
+</ol>
+<h3 id="philosophers-behavior">Philosopher’s behavior</h3>
+<p>Let us try to describe the individual philosopher’s behavior. The
+subject tells us:</p>
+<blockquote>
+<p>When a philosopher has finished eating, they put their forks back on
+the table and start sleeping. Once awake, they start thinking again.</p>
+</blockquote>
+<p>Therefore the order of the actions is <code>eat, sleep, think</code>.
+But nowhere does it say which action to start with. We could start with
+either one.</p>
+<ul>
+<li>try to eat (if there is a fork)</li>
+<li>sleep</li>
+<li>think</li>
+</ul>
+<p>While eating and sleeping don’t offer much choice (they are
+<code>usleep</code> with and without holding a mutex).</p>
+<p>Why would we need <a
+href="https://www.man7.org/linux/man-pages/man2/waitpid.2.html"><code>waitpid</code></a>
+if we can’t <a
+href="https://www.man7.org/linux/man-pages/man2/fork.2.html"><code>fork</code></a>?
+Good question.</p>
+<p>Have you paid attention to the philosophical implications made? What
+may look like thinking on the outside is really only waiting to eat.</p>
+</body>
+</html>

@@ -17,6 +17,8 @@ index.html: index.md
 open:
 ifeq ($(OS),Darwin)
 	open index.html
+else
+	firefox index.html
 endif
 
 setup:
@@ -29,6 +31,7 @@ endif
 
 clean:
 	rm -f $(HTML)
+fclean: clean
 
 re: clean
 	$(MAKE) all
