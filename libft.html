@@ -5,6 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>triedel's Guide to 42</title>
+  <link rel="icon" href="favicon.ico" />
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -33,9 +34,7 @@
 <ul>
 <li><a href="#libftintra-libft" id="toc-libftintra-libft">Libft</a>
 <ul>
-<li><a href="#mandatory-part---part-1-libc-functions"
-id="toc-mandatory-part---part-1-libc-functions">Mandatory part - Part 1
-(Libc functions)</a>
+<li><a href="#mandatory-part" id="toc-mandatory-part">Mandatory part</a>
 <ul>
 <li><a href="#char-functions" id="toc-char-functions">Char
 functions</a></li>
@@ -47,6 +46,7 @@ functions</a></li>
 id="toc-mandatory-part---part-2-additional-functions">Mandatory part -
 Part 2 (Additional functions)</a></li>
 <li><a href="#bonus-part" id="toc-bonus-part">Bonus part</a></li>
+<li><a href="#remarks" id="toc-remarks">Remarks</a></li>
 </ul></li>
 <li><a href="#resources" id="toc-resources">Resources</a></li>
 </ul>
@@ -63,10 +63,10 @@ from BSD. I refer to <a
 href="https://man.freebsd.org/cgi/man.cgi">FreeBSD’s man pages</a> (same
 as <code>man</code>) for those instead of the <a
 href="https://cplusplus.com/reference/clibrary/">C reference</a>.</p>
-<h2 id="mandatory-part---part-1-libc-functions">Mandatory part - Part 1
-(Libc functions)</h2>
+<h2 id="mandatory-part">Mandatory part</h2>
 <p>Most of the functions concern either chars or strings. The other
-three are taken from <code>stdlib.h</code>.</p>
+three are taken from <a
+href="https://cplusplus.com/reference/cstdlib/"><code>stdlib.h</code></a>.</p>
 <h3 id="char-functions">Char functions</h3>
 <p>The <a href="https://cplusplus.com/reference/cctype/">reference</a>
 has a handy table that gives a good overview. The man pages contains the
@@ -98,6 +98,15 @@ functions for strings:</p>
 <p>Here we are building a <a
 href="https://en.wikipedia.org/wiki/Linked_list">singly linked
 list</a>.</p>
+<h2 id="remarks">Remarks</h2>
+<ul>
+<li>I struggled with strlcat, because the return value that it gives
+seems to contradict the man page in some cases. For those cases I
+actually condone having a peek at [bsd_libc][the original code] to
+understand how it’s supposed to behave. I noticed that we always count
+to the back of <code>src</code> and up to len in <code>dst</code>. That
+helped me reproduce the same behavior.</li>
+</ul>
 <h1 id="resources">Resources</h1>
 <ul>
 <li><a href="https://cplusplus.com/reference/cctype/">ctype.h</a></li>
@@ -106,5 +115,6 @@ list</a>.</p>
 <li><a href="https://man.freebsd.org/cgi/man.cgi">FreeBSD man
 pages</a></li>
 </ul>
+<div style="height: 1500px; display: block"></div>
 </body>
 </html>
