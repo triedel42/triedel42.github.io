@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>triedel's 42 Notebook</title>
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="styling.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title"><a href="index.html">triedel's 42 Notebook</a></h1>
+<p class="subtitle">"Mostly useless"</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#minishell" id="toc-minishell">Minishell</a>
+<ul>
+<li><a href="#resources" id="toc-resources">Resources</a></li>
+<li><a href="#preliminary-research"
+id="toc-preliminary-research">Preliminary research</a>
+<ul>
+<li><a href="#formal-languages" id="toc-formal-languages">Formal
+languages</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="minishell">Minishell</h1>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><a href="https://aosabook.org/en/v1/bash.html">The Bourne-Again
+Shell</a> gives a great overview for our tasks</li>
+<li><a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18">The
+Shell Command Language</a> (Part of the <a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/">POSIX
+standard</a>)</li>
+<li>The Open Group has a <a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/contents.html">Shell
+and Utilities section</a></li>
+<li><a href="https://git.kernel.org/pub/scm/utils/dash/dash.git/">dash
+(sh) Source code</a></li>
+</ul>
+<h2 id="preliminary-research">Preliminary research</h2>
+<p><a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18">This
+page</a> from the POSIX standard describes how a shell should behave to
+be POSIX-compliant and we will need it again and again. Even though our
+goal is not to write a shell that follows it.</p>
+<p>Before writing a bunch of code, let’s see how software is written.
+Maybe we will find some good approaches to make our life easier. In
+particular it will be useful to have a look at <a
+href="https://www.gnu.org/software/bash/">bash</a>, <a
+href="http://gondor.apana.org.au/~herbert/dash/">dash</a> and <a
+href="https://www.zsh.org/">zshell</a>. I did a quick
+<code>cat *.c *.h | wc -l</code> in the source dir to see just how big
+these projects are already, and this doesn’t even include some parts
+like the bash modules folder:</p>
+<ul>
+<li><a
+href="https://git.kernel.org/pub/scm/utils/dash/dash.git/">dash</a>:
+around 18K LOC</li>
+<li><a href="https://savannah.gnu.org/git/?group=bash">bash</a>: around
+82K LOC</li>
+<li><a href="https://zsh.sourceforge.io/Arc/source.html">zsh</a>: around
+80K LOC</li>
+</ul>
+<p><a href="http://gondor.apana.org.au/~herbert/dash/">Dash</a> in
+particular will prove useful, because it is the smallest of them, and
+supposedly POSIX-compliant. A quick look at its <a
+href="https://git.kernel.org/pub/scm/utils/dash/dash.git/tree/src/parser.c">parser.c</a>
+makes it seem pretty helpful.</p>
+<p>Reading source code without any guidance can be time-consuming. <a
+href="https://aosabook.org/en/v1/bash.html">This Chapter</a> of the <a
+href="https://aosabook.org">AOSA book</a> (which is awesome btw.)
+describes the implementation of bash. That should give us a good
+starting point for our research. It also has this helpful graphic.</p>
+<p><a href="img/minishell-bash.png"><img style="width: 100%" src="img/minishell-bash.png"></img></a></p>
+<p><a
+href="https://www.gnu.org/software/bash/manual/html_node/Shell-Operation.html">Here</a>
+are the steps that bash performs. As you can see they are very similar.
+But now we have a good idea about what’s ahead of us.</p>
+<h3 id="formal-languages">Formal languages</h3>
+<p>Some new concepts for parsing are <a
+href="https://en.wikipedia.org/wiki/Formal_language">Formal
+languages</a> and <a
+href="https://en.wikipedia.org/wiki/Regular_grammar">regular
+grammars</a>.</p>
+<p>Our input - if syntactically correct - can be described by such a
+regular grammar.</p>
+<p>When we parse our text we transform a stream of characters into an <a
+href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract
+Syntax Tree</a>. This abstract syntax tree is then the data structure
+that we can work with to execute (complex) shell commands.</p>
+<p>I stumbled upon this demotivating line while reading about
+parsing:</p>
+<blockquote>
+<p>The Posix shell committee deserves significant credit for finally
+publishing a definitive grammar for a Unix shell, albeit one that has
+plenty of context dependencies. - <a
+href="https://aosabook.org/en/v1/bash.html">AOSA</a></p>
+</blockquote>
+<p>That’s right. Credit goes to the people who managed to come up with
+the grammar which we’re supposed to implement!</p>
+<p>I suppose that means the “shell grammar” is inconsistent and (more
+importantly) context-dependent. Context-dependency by the way has
+implications for parsing.</p>
+<p>If we - as we should here - want to make our life easier, we could
+constrain ourselves to a simplified grammar. We don’t have to care about
+POSIX after all, we build minishell. Most importantly we need our
+grammar to be context-free.</p>
+<h4 id="parser">Parser</h4>
+<p>I would like to build an <a
+href="https://en.wikipedia.org/wiki/LL_parser">LL parser</a>, because we
+could make it work with any arbitrary grammar. This means that our shell
+grammar must be context-free.</p>
+<h4 id="tokenizer">Tokenizer</h4>
+<p>As a first step we divide our input into <a
+href="https://en.wikipedia.org/wiki/Lexical_analysis#Token">tokens</a>.
+Thankfully this process is described in detail in section “2.3 Token
+Recognition” <a
+href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18">here</a>.</p>
+<div style="height: 1500px; display: block"></div>
+</body>
+</html>
