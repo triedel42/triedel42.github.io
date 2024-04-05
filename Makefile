@@ -1,7 +1,7 @@
 SRCS = $(wildcard *.md)
 HTML = $(SRCS:.md=.html)
 
-PD_METADATA = --metadata=title:"triedel's Guide to 42" --metadata=subtitle:"\"mostly useless\""
+PD_METADATA = --metadata=title:"triedel's 42 Notebook" --metadata=subtitle:"\"Mostly useless\""
 PD = pandoc --standalone --template=template.html --css=styling.css $(PD_METADATA)
 
 OS = $(shell uname -s)
